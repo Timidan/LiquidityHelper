@@ -68,19 +68,20 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     //Add liquidity to quickswap
     //tokenA is always $GHST
     function _addLiquidityQuickswap(
+        address _tokenA,
         address _tokenB,
-        uint256 _ghstAmount,
+        uint256 _amountADesired,
         uint256 _amountBDesired,
-        uint256 _ghstMin,
+        uint256 _amountAMin,
         uint256 _amountBMin
     ) internal {
         //approve amount to spend
         router.addLiquidity(
-            GHST,
+            _tokenA,
             _tokenB,
-            _ghstAmount,
+            _amountADesired,
             _amountBDesired,
-            _ghstMin,
+            _amountAMin,
             _amountBMin,
             address(this),
             block.timestamp + 3000
@@ -88,19 +89,20 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     }
 
     function _addLiquidityGAX(
+        address _tokenA,
         address _tokenB,
-        uint256 _ghstAmount,
+        uint256 _amountADesired,
         uint256 _amountBDesired,
-        uint256 _ghstMin,
+        uint256 _amountAMin,
         uint256 _amountBMin
     ) internal {
         //approve amount to spend
         gaxRouter.addLiquidity(
-            GHST,
+            _tokenA,
             _tokenB,
-            _ghstAmount,
+            _amountADesired,
             _amountBDesired,
-            _ghstMin,
+            _amountAMin,
             _amountBMin,
             address(this),
             block.timestamp + 3000
@@ -108,16 +110,17 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     }
 
     function _removeLiquidityGAX(
+        address _tokenA,
         address _tokenB,
         uint256 _liquidity,
-        uint256 _ghstMin,
+        uint256 _amountAMin,
         uint256 _amountBMin
     ) internal {
         gaxRouter.removeLiquidity(
-            GHST,
+            _tokenA,
             _tokenB,
             _liquidity,
-            _ghstMin,
+            _amountAMin,
             _amountBMin,
             address(this),
             block.timestamp + 3000
@@ -125,16 +128,17 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     }
 
     function _removeLiquidityQuickswap(
+        address _tokenA,
         address _tokenB,
         uint256 _liquidity,
-        uint256 _ghstMin,
+        uint256 _amountAMin,
         uint256 _amountBMin
     ) internal {
         router.removeLiquidity(
-            GHST,
+            _tokenA,
             _tokenB,
             _liquidity,
-            _ghstMin,
+            _amountAMin,
             _amountBMin,
             address(this),
             block.timestamp + 3000
@@ -146,18 +150,20 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     function addLiquidity(AddLiquidityArgs calldata _args) public onlyOwner {
         if (_args._legacy) {
             _addLiquidityQuickswap(
+                _args._tokenA,
                 _args._tokenB,
-                _args._ghstAmount,
+                _args._amountADesired,
                 _args._amountBDesired,
-                _args._ghstMin,
+                _args._amountAMin,
                 _args._amountBMin
             );
         } else {
             _addLiquidityGAX(
+                _args._tokenA,
                 _args._tokenB,
-                _args._ghstAmount,
+                _args._amountADesired,
                 _args._amountBDesired,
-                _args._ghstMin,
+                _args._amountAMin,
                 _args._amountBMin
             );
         }
@@ -169,16 +175,18 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     {
         if (_args._legacy) {
             _removeLiquidityQuickswap(
+                _args._tokenA,
                 _args._tokenB,
                 _args._liquidity,
-                _args._ghstMin,
+                _args._amountAMin,
                 _args._amountBMin
             );
         } else {
             _removeLiquidityGAX(
+                _args._tokenA,
                 _args._tokenB,
                 _args._liquidity,
-                _args._ghstMin,
+                _args._amountAMin,
                 _args._amountBMin
             );
         }

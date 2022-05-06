@@ -59,23 +59,55 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
         //add 100 fud liquidity
         //at current rates...at least 10LP tokens are obtained
         helper.addLiquidity(
-            AddLiquidityArgs(alchemica[0], 10e18, 100e18, 0, 0, true)
+            AddLiquidityArgs(GHST, alchemica[0], 10e18, 100e18, 0, 0, true)
         );
         uint avail = IERC20(pairAddresses[0]).balanceOf(address(helper));
         //remove liquidity
 
         helper.withdrawLiquidity(
-            RemoveLiquidityArgs(alchemica[0], avail, 0, 0, true)
+            RemoveLiquidityArgs(GHST, alchemica[0], avail, 0, 0, true)
         );
     }
 
     function testBatchProvideAndWithdrawLiquidity() public {
         //construct array
         AddLiquidityArgs[] memory args = new AddLiquidityArgs[](4);
-        args[0] = AddLiquidityArgs(alchemica[0], 10e18, 100e18, 0, 0, true);
-        args[1] = AddLiquidityArgs(alchemica[1], 10e18, 100e18, 0, 0, true);
-        args[2] = AddLiquidityArgs(alchemica[2], 10e18, 100e18, 0, 0, true);
-        args[3] = AddLiquidityArgs(alchemica[3], 10e18, 100e18, 0, 0, true);
+        args[0] = AddLiquidityArgs(
+            GHST,
+            alchemica[0],
+            10e18,
+            100e18,
+            0,
+            0,
+            true
+        );
+        args[1] = AddLiquidityArgs(
+            GHST,
+            alchemica[1],
+            10e18,
+            100e18,
+            0,
+            0,
+            true
+        );
+        args[2] = AddLiquidityArgs(
+            GHST,
+            alchemica[2],
+            10e18,
+            100e18,
+            0,
+            0,
+            true
+        );
+        args[3] = AddLiquidityArgs(
+            GHST,
+            alchemica[3],
+            10e18,
+            100e18,
+            0,
+            0,
+            true
+        );
         helper.batchAddLiquidity(args);
 
         //get available liquidity
@@ -91,10 +123,38 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
         emit log_uint(availKek);
 
         RemoveLiquidityArgs[] memory args2 = new RemoveLiquidityArgs[](4);
-        args2[0] = RemoveLiquidityArgs(alchemica[0], availFud, 0, 0, true);
-        args2[1] = RemoveLiquidityArgs(alchemica[1], availFomo, 0, 0, true);
-        args2[2] = RemoveLiquidityArgs(alchemica[2], availAlpha, 0, 0, true);
-        args2[3] = RemoveLiquidityArgs(alchemica[3], availKek, 0, 0, true);
+        args2[0] = RemoveLiquidityArgs(
+            GHST,
+            alchemica[0],
+            availFud,
+            0,
+            0,
+            true
+        );
+        args2[1] = RemoveLiquidityArgs(
+            GHST,
+            alchemica[1],
+            availFomo,
+            0,
+            0,
+            true
+        );
+        args2[2] = RemoveLiquidityArgs(
+            GHST,
+            alchemica[2],
+            availAlpha,
+            0,
+            0,
+            true
+        );
+        args2[3] = RemoveLiquidityArgs(
+            GHST,
+            alchemica[3],
+            availKek,
+            0,
+            0,
+            true
+        );
         helper.batchRemoveLiquidity(args2);
     }
 }
