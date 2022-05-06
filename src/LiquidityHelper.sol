@@ -6,9 +6,7 @@ import "../interfaces/ILIquidityHelper.sol";
 import "./Ownable.sol";
 
 contract LiquidityHelper is Ownable, ILiquidityHelper {
-    error UnsupportedToken();
     error LengthMismatch();
-    mapping(address => bool) supported;
     IUniswapV2Router01 router;
     IUniswapV2Router01 gaxRouter;
     address GHST;
@@ -30,7 +28,6 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         IERC20(_ghst).approve(_quickswapRouter, type(uint256).max);
         //approve alchemica infinitely
         for (uint256 i; i < _alchemicaTokens.length; i++) {
-            supported[_alchemicaTokens[i]] = true;
             require(
                 IERC20(_alchemicaTokens[i]).approve(
                     _quickswapRouter,
@@ -51,18 +48,11 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         router = IUniswapV2Router01(_quickswapRouter);
         alchemicaTokens = _alchemicaTokens;
         GHST = _ghst;
-        supported[GHST] = true;
         multisig = _multisig;
     }
 
     function _transferOut(address _token, uint256 _amount) internal {
-        // if (!supported[_token]) revert UnsupportedToken();
         require(IERC20(_token).transfer(multisig, _amount));
-    }
-
-    function _transferIn(address _token, uint256 _amount) internal {
-        if (!supported[_token]) revert UnsupportedToken();
-        require(IERC20(_token).transferFrom(multisig, address(this), _amount));
     }
 
     function transferOutTokens(
@@ -72,16 +62,6 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         if (_tokens.length != _amounts.length) revert LengthMismatch();
         for (uint256 i; i < _tokens.length; i++) {
             _transferOut(_tokens[i], _amounts[i]);
-        }
-    }
-
-    function transferInTokens(
-        address[] calldata _tokens,
-        uint256[] calldata _amounts
-    ) external onlyOwner {
-        if (_tokens.length != _amounts.length) revert LengthMismatch();
-        for (uint256 i; i < _tokens.length; i++) {
-            _transferIn(_tokens[i], _amounts[i]);
         }
     }
 
@@ -164,7 +144,6 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     //_legacy =true ==quickswap
     //_legacy =false== GAX
     function addLiquidity(AddLiquidityArgs calldata _args) public onlyOwner {
-        if (!supported[_args._tokenB]) revert UnsupportedToken();
         if (_args._legacy) {
             _addLiquidityQuickswap(
                 _args._tokenB,
@@ -188,7 +167,6 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         public
         onlyOwner
     {
-        if (!supported[_args._tokenB]) revert UnsupportedToken();
         if (_args._legacy) {
             _removeLiquidityQuickswap(
                 _args._tokenB,

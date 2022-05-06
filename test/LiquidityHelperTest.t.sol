@@ -58,19 +58,11 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
     function testProvideAndWithdrawLiquidity() public {
         //add 100 fud liquidity
         //at current rates...at least 10LP tokens are obtained
-        cheat.expectRevert(LiquidityHelper.UnsupportedToken.selector);
-        helper.addLiquidity(
-            AddLiquidityArgs(address(0xdeaddead), 10e18, 100e18, 0, 0, true)
-        );
         helper.addLiquidity(
             AddLiquidityArgs(alchemica[0], 10e18, 100e18, 0, 0, true)
         );
         uint avail = IERC20(pairAddresses[0]).balanceOf(address(helper));
         //remove liquidity
-        cheat.expectRevert(LiquidityHelper.UnsupportedToken.selector);
-        helper.withdrawLiquidity(
-            RemoveLiquidityArgs(address(0xdeaddead), avail, 0, 0, false)
-        );
 
         helper.withdrawLiquidity(
             RemoveLiquidityArgs(alchemica[0], avail, 0, 0, true)
