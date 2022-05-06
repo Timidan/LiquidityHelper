@@ -2,5 +2,9 @@
 src = 'src'
 out = 'out'
 libs = ['lib']
+verbosity=2
+sender = "0x3a79bF3555F33f2adCac02da1c4a0A0163F666ce"
+rpc_storage_caching = { chains = "all", endpoints = "all" }
+
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
