@@ -209,4 +209,8 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     function setGAXRouter(address _routerAddress) public onlyOwner {
         gaxRouter = IUniswapV2Router01(_routerAddress);
     }
+
+    function setApproval(address _token, address _spender) public onlyOwner {
+        IERC20(_token).approve(_spender, type(uint256).max);
+    }
 }
