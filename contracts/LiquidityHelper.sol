@@ -3,9 +3,8 @@ pragma solidity 0.8.13;
 import "../interfaces/IERC20.sol";
 import "../interfaces/IUniswapV2Router01.sol";
 import "../interfaces/ILIquidityHelper.sol";
-import "./Ownable.sol";
 
-contract LiquidityHelper is Ownable, ILiquidityHelper {
+contract LiquidityHelper is ILiquidityHelper {
     error LengthMismatch();
     IUniswapV2Router01 router;
     IUniswapV2Router01 gaxRouter;
@@ -51,6 +50,11 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         multisig = _multisig;
     }
 
+    modifier onlyMultisig() {
+        require(msg.sender == multisig, "Not Multisig");
+        _;
+    }
+
     function _transferOut(address _token, uint256 _amount) internal {
         require(IERC20(_token).transfer(multisig, _amount));
     }
@@ -58,7 +62,7 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     function transferOutTokens(
         address[] calldata _tokens,
         uint256[] calldata _amounts
-    ) external onlyOwner {
+    ) external onlyMultisig {
         if (_tokens.length != _amounts.length) revert LengthMismatch();
         for (uint256 i; i < _tokens.length; i++) {
             _transferOut(_tokens[i], _amounts[i]);
@@ -66,7 +70,6 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
     }
 
     //Add liquidity to quickswap
-    //tokenA is always $GHST
     function _addLiquidityQuickswap(
         address _tokenA,
         address _tokenB,
@@ -147,7 +150,7 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
 
     //_legacy =true ==quickswap
     //_legacy =false== GAX
-    function addLiquidity(AddLiquidityArgs calldata _args) public onlyOwner {
+    function addLiquidity(AddLiquidityArgs calldata _args) public onlyMultisig {
         if (_args._legacy) {
             _addLiquidityQuickswap(
                 _args._tokenA,
@@ -171,7 +174,7 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
 
     function withdrawLiquidity(RemoveLiquidityArgs calldata _args)
         public
-        onlyOwner
+        onlyMultisig
     {
         if (_args._legacy) {
             _removeLiquidityQuickswap(
@@ -206,11 +209,11 @@ contract LiquidityHelper is Ownable, ILiquidityHelper {
         }
     }
 
-    function setGAXRouter(address _routerAddress) public onlyOwner {
+    function setGAXRouter(address _routerAddress) public onlyMultisig {
         gaxRouter = IUniswapV2Router01(_routerAddress);
     }
 
-    function setApproval(address _token, address _spender) public onlyOwner {
+    function setApproval(address _token, address _spender) public onlyMultisig {
         IERC20(_token).approve(_spender, type(uint256).max);
     }
 }

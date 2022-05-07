@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.13;
 
 import "../lib/ds-test.git/src/cheat.sol";
 import "../lib/ds-test.git/src/test.sol";
-import "../src/LiquidityHelper.sol";
+import "../contracts/LiquidityHelper.sol";
 import "../interfaces/IERC20.sol";
 import "../interfaces/ILIquidityHelper.sol";
 
@@ -56,6 +56,7 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
     }
 
     function testProvideAndWithdrawLiquidity() public {
+        cheat.startPrank(mSig);
         //add 100 fud liquidity
         //at current rates...at least 10LP tokens are obtained
         helper.addLiquidity(
@@ -70,6 +71,7 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
     }
 
     function testBatchProvideAndWithdrawLiquidity() public {
+        cheat.startPrank(mSig);
         //construct array
         AddLiquidityArgs[] memory args = new AddLiquidityArgs[](4);
         args[0] = AddLiquidityArgs(

@@ -1,2 +1,7 @@
 cache/
 out/
+node_modules/
+typechain-types
+artifacts
+.vscode
+.env
