@@ -1,219 +1,108 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 import "../interfaces/IERC20.sol";
 import "../interfaces/IUniswapV2Router01.sol";
 import "../interfaces/ILIquidityHelper.sol";
 
 contract LiquidityHelper is ILiquidityHelper {
-    error LengthMismatch();
-    IUniswapV2Router01 router;
-    IUniswapV2Router01 gaxRouter;
-    address GHST;
-    address multisig;
-    //0--fud
-    //1--fomo
-    //2--alpha
-    //3--kek
-    address[4] alchemicaTokens;
+  error LengthMismatch();
+  IUniswapV2Router01 router;
+  address GHST;
+  address owner;
+  //0--fud
+  //1--fomo
+  //2--alpha
+  //3--kek
+  address[4] alchemicaTokens;
 
-    constructor(
-        address[4] memory _alchemicaTokens,
-        address[4] memory _pairAddresses,
-        address _quickswapRouter,
-        address _ghst,
-        address _multisig
-    ) {
-        //approve ghst
-        IERC20(_ghst).approve(_quickswapRouter, type(uint256).max);
-        //approve alchemica infinitely
-        for (uint256 i; i < _alchemicaTokens.length; i++) {
-            require(
-                IERC20(_alchemicaTokens[i]).approve(
-                    _quickswapRouter,
-                    type(uint256).max
-                )
-            );
-        }
-        //approve pair Tokens
-        for (uint256 i; i < _pairAddresses.length; i++) {
-            require(
-                IERC20(_pairAddresses[i]).approve(
-                    _quickswapRouter,
-                    type(uint256).max
-                )
-            );
-        }
-
-        router = IUniswapV2Router01(_quickswapRouter);
-        alchemicaTokens = _alchemicaTokens;
-        GHST = _ghst;
-        multisig = _multisig;
+  constructor(
+    address[4] memory _alchemicaTokens,
+    address[] memory _pairAddresses, //might be more than 4 pairs
+    address _quickswapRouter,
+    address _ghst,
+    address _owner
+  ) {
+    //approve ghst
+    IERC20(_ghst).approve(_quickswapRouter, type(uint256).max);
+    //approve alchemica infinitely
+    for (uint256 i; i < _alchemicaTokens.length; i++) {
+      require(
+        IERC20(_alchemicaTokens[i]).approve(_quickswapRouter, type(uint256).max)
+      );
+    }
+    //approve pair Tokens
+    for (uint256 i; i < _pairAddresses.length; i++) {
+      require(
+        IERC20(_pairAddresses[i]).approve(_quickswapRouter, type(uint256).max)
+      );
     }
 
-    modifier onlyMultisig() {
-        require(msg.sender == multisig, "Not Multisig");
-        _;
-    }
+    router = IUniswapV2Router01(_quickswapRouter);
+    alchemicaTokens = _alchemicaTokens;
+    GHST = _ghst;
+    owner = _owner;
+  }
 
-    function _transferOut(address _token, uint256 _amount) internal {
-        require(IERC20(_token).transfer(multisig, _amount));
-    }
+  modifier onlyOwner() {
+    require(msg.sender == owner, "Not Owner");
+    _;
+  }
 
-    function transferOutTokens(
-        address[] calldata _tokens,
-        uint256[] calldata _amounts
-    ) external onlyMultisig {
-        if (_tokens.length != _amounts.length) revert LengthMismatch();
-        for (uint256 i; i < _tokens.length; i++) {
-            _transferOut(_tokens[i], _amounts[i]);
-        }
-    }
+  function transferOwnership(address _newOwner) external onlyOwner {
+    owner = _newOwner;
+  }
 
-    //Add liquidity to quickswap
-    function _addLiquidityQuickswap(
-        address _tokenA,
-        address _tokenB,
-        uint256 _amountADesired,
-        uint256 _amountBDesired,
-        uint256 _amountAMin,
-        uint256 _amountBMin
-    ) internal {
-        //approve amount to spend
-        router.addLiquidity(
-            _tokenA,
-            _tokenB,
-            _amountADesired,
-            _amountBDesired,
-            _amountAMin,
-            _amountBMin,
-            address(this),
-            block.timestamp + 3000
-        );
+  function returnTokens(address[] calldata _tokens, uint256[] calldata _amounts)
+    external
+    onlyOwner
+  {
+    if (_tokens.length != _amounts.length) revert LengthMismatch();
+    for (uint256 i; i < _tokens.length; i++) {
+      require(IERC20(_tokens[i]).transfer(owner, _amounts[i]));
     }
+  }
 
-    function _addLiquidityGAX(
-        address _tokenA,
-        address _tokenB,
-        uint256 _amountADesired,
-        uint256 _amountBDesired,
-        uint256 _amountAMin,
-        uint256 _amountBMin
-    ) internal {
-        //approve amount to spend
-        gaxRouter.addLiquidity(
-            _tokenA,
-            _tokenB,
-            _amountADesired,
-            _amountBDesired,
-            _amountAMin,
-            _amountBMin,
-            address(this),
-            block.timestamp + 3000
-        );
-    }
+  function addLiquidity(AddLiquidityArgs calldata _args) public onlyOwner {
+    router.addLiquidity(
+      _args._tokenA,
+      _args._tokenB,
+      _args._amountADesired,
+      _args._amountBDesired,
+      _args._amountAMin,
+      _args._amountBMin,
+      address(this),
+      block.timestamp + 3000
+    );
+  }
 
-    function _removeLiquidityGAX(
-        address _tokenA,
-        address _tokenB,
-        uint256 _liquidity,
-        uint256 _amountAMin,
-        uint256 _amountBMin
-    ) internal {
-        gaxRouter.removeLiquidity(
-            _tokenA,
-            _tokenB,
-            _liquidity,
-            _amountAMin,
-            _amountBMin,
-            address(this),
-            block.timestamp + 3000
-        );
-    }
+  function withdrawLiquidity(RemoveLiquidityArgs calldata _args)
+    public
+    onlyOwner
+  {
+    router.removeLiquidity(
+      _args._tokenA,
+      _args._tokenB,
+      _args._liquidity,
+      _args._amountAMin,
+      _args._amountBMin,
+      address(this),
+      block.timestamp + 3000
+    );
+  }
 
-    function _removeLiquidityQuickswap(
-        address _tokenA,
-        address _tokenB,
-        uint256 _liquidity,
-        uint256 _amountAMin,
-        uint256 _amountBMin
-    ) internal {
-        router.removeLiquidity(
-            _tokenA,
-            _tokenB,
-            _liquidity,
-            _amountAMin,
-            _amountBMin,
-            address(this),
-            block.timestamp + 3000
-        );
+  function batchAddLiquidity(AddLiquidityArgs[] calldata _args) external {
+    for (uint256 i; i < _args.length; i++) {
+      addLiquidity(_args[i]);
     }
+  }
 
-    //_legacy =true ==quickswap
-    //_legacy =false== GAX
-    function addLiquidity(AddLiquidityArgs calldata _args) public onlyMultisig {
-        if (_args._legacy) {
-            _addLiquidityQuickswap(
-                _args._tokenA,
-                _args._tokenB,
-                _args._amountADesired,
-                _args._amountBDesired,
-                _args._amountAMin,
-                _args._amountBMin
-            );
-        } else {
-            _addLiquidityGAX(
-                _args._tokenA,
-                _args._tokenB,
-                _args._amountADesired,
-                _args._amountBDesired,
-                _args._amountAMin,
-                _args._amountBMin
-            );
-        }
+  function batchRemoveLiquidity(RemoveLiquidityArgs[] calldata _args) external {
+    for (uint256 i; i < _args.length; i++) {
+      withdrawLiquidity(_args[i]);
     }
+  }
 
-    function withdrawLiquidity(RemoveLiquidityArgs calldata _args)
-        public
-        onlyMultisig
-    {
-        if (_args._legacy) {
-            _removeLiquidityQuickswap(
-                _args._tokenA,
-                _args._tokenB,
-                _args._liquidity,
-                _args._amountAMin,
-                _args._amountBMin
-            );
-        } else {
-            _removeLiquidityGAX(
-                _args._tokenA,
-                _args._tokenB,
-                _args._liquidity,
-                _args._amountAMin,
-                _args._amountBMin
-            );
-        }
-    }
-
-    function batchAddLiquidity(AddLiquidityArgs[] calldata _args) external {
-        for (uint256 i; i < _args.length; i++) {
-            addLiquidity(_args[i]);
-        }
-    }
-
-    function batchRemoveLiquidity(RemoveLiquidityArgs[] calldata _args)
-        external
-    {
-        for (uint256 i; i < _args.length; i++) {
-            withdrawLiquidity(_args[i]);
-        }
-    }
-
-    function setGAXRouter(address _routerAddress) public onlyMultisig {
-        gaxRouter = IUniswapV2Router01(_routerAddress);
-    }
-
-    function setApproval(address _token, address _spender) public onlyMultisig {
-        IERC20(_token).approve(_spender, type(uint256).max);
-    }
+  function setApproval(address _token, address _spender) public onlyOwner {
+    IERC20(_token).approve(_spender, type(uint256).max);
+  }
 }
