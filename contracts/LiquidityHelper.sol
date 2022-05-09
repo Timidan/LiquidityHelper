@@ -18,26 +18,26 @@ contract LiquidityHelper is ILiquidityHelper {
   constructor(
     address[4] memory _alchemicaTokens,
     address[] memory _pairAddresses, //might be more than 4 pairs
-    address _quickswapRouter,
+    address _routerAddress,
     address _ghst,
     address _owner
   ) {
     //approve ghst
-    IERC20(_ghst).approve(_quickswapRouter, type(uint256).max);
+    IERC20(_ghst).approve(_routerAddress, type(uint256).max);
     //approve alchemica infinitely
     for (uint256 i; i < _alchemicaTokens.length; i++) {
       require(
-        IERC20(_alchemicaTokens[i]).approve(_quickswapRouter, type(uint256).max)
+        IERC20(_alchemicaTokens[i]).approve(_routerAddress, type(uint256).max)
       );
     }
     //approve pair Tokens
     for (uint256 i; i < _pairAddresses.length; i++) {
       require(
-        IERC20(_pairAddresses[i]).approve(_quickswapRouter, type(uint256).max)
+        IERC20(_pairAddresses[i]).approve(_routerAddress, type(uint256).max)
       );
     }
 
-    router = IUniswapV2Router01(_quickswapRouter);
+    router = IUniswapV2Router01(_routerAddress);
     alchemicaTokens = _alchemicaTokens;
     GHST = _ghst;
     owner = _owner;
