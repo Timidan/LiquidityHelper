@@ -114,4 +114,8 @@ contract LiquidityHelper is ILiquidityHelper {
     function setApproval(address _token, address _spender) public onlyOwner {
         IERC20(_token).approve(_spender, type(uint256).max);
     }
+
+    function contractOwner() public view returns (address) {
+        return owner;
+    }
 }

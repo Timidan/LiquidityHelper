@@ -109,7 +109,13 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
         amounts[1] = 10;
         amounts[2] = 10;
         amounts[3] = 10;
-        amounts[4] = IERC20(GHST).balanceOf(address(this));
+        amounts[4] = IERC20(GHST).balanceOf(address(helper));
+
+        uint256 balBefore1 = IERC20(alchemica[0]).balanceOf(address(helper));
+        uint256 balBefore2 = IERC20(alchemica[1]).balanceOf(address(helper));
+        uint256 balBefore3 = IERC20(alchemica[2]).balanceOf(address(helper));
+        uint256 balBefore4 = IERC20(alchemica[3]).balanceOf(address(helper));
+        uint256 ghstBalanceBefore = IERC20(GHST).balanceOf(address(helper));
 
         address[] memory tokens = new address[](5);
         tokens[0] = alchemica[0];
@@ -118,10 +124,35 @@ contract LiquidityHelperTest is DSTest, ILiquidityHelper {
         tokens[2] = alchemica[2];
         tokens[3] = alchemica[3];
         tokens[4] = GHST;
+
         helper.returnTokens(tokens, amounts);
+
+        assertEq(
+            IERC20(alchemica[0]).balanceOf(address(helper)),
+            balBefore1 - 10
+        );
+        assertEq(
+            IERC20(alchemica[1]).balanceOf(address(helper)),
+            balBefore2 - 10
+        );
+        assertEq(
+            IERC20(alchemica[2]).balanceOf(address(helper)),
+            balBefore3 - 10
+        );
+        assertEq(
+            IERC20(alchemica[3]).balanceOf(address(helper)),
+            balBefore4 - 10
+        );
+        assertEq(IERC20(GHST).balanceOf(address(helper)), 0);
     }
 
     function testFailTransferOwnership() public {
         helper.setApproval(GHST, msg.sender);
+    }
+
+    function testTransferOwnership() public {
+        cheat.startPrank(mSig);
+        helper.transferOwnership(address(0xdead));
+        assertEq(helper.contractOwner(), address(0xdead));
     }
 }
