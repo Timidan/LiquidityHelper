@@ -1,12 +1,14 @@
 /* global task ethers */
 
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
-require("hardhat-contract-sizer");
-require("dotenv").config();
-require("solidity-coverage");
+import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
+import '@nomiclabs/hardhat-waffle'
+import '@nomiclabs/hardhat-etherscan'
+require('hardhat-contract-sizer')
+require('dotenv').config()
+require('solidity-coverage')
+require('./tasks/addLiquidity.ts')
+require('./tasks/removeLiquidity.ts')
 
 // You have to export an object to set up your config
 // This object can have the following optional entries:
@@ -27,10 +29,11 @@ module.exports = {
       },
       blockGasLimit: 20000000,
       timeout: 120000,
-      gas: "auto",
+      gas: 'auto',
     },
     localhost: {
       timeout: 8000000,
+      gas: 'auto',
     },
     matic: {
       url: process.env.MATIC_URL,
@@ -41,7 +44,7 @@ module.exports = {
     },
   },
   gasReporter: {
-    currency: "USD",
+    currency: 'USD',
     gasPrice: 100,
     enabled: false,
   },
@@ -54,7 +57,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.13",
+        version: '0.8.13',
         settings: {
           optimizer: {
             enabled: true,
@@ -64,4 +67,4 @@ module.exports = {
       },
     ],
   },
-};
+}

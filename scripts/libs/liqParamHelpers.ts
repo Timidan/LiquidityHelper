@@ -15,15 +15,19 @@ export const GHST = '0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7'
 
 export interface AddLiquidityTaskArgs {
   multisig: string
-  functionArguments: AddLiquidityArgsStruct[]
+  functionArguments: string
   useMultisig: boolean
 }
 
 export interface RemoveLiquidityTaskArgs {
   multisig: string
-  functionArguments: RemoveLiquidityArgsStruct[]
+  functionArguments: string
   useMultisig: boolean
 }
 export const abi = [
   'function submitTransaction(address destination, uint value, bytes data) public returns (uint transactionId)',
+  'function approve(address spender,uint amount) public returns(bool success)',
+  'function confirmTransaction(uint256 transactionId)  public',
+  'function balanceOf(address account) public view returns(uint256)',
+  'function transfer(address to,uint256 amount) public returns(bool success)',
 ]

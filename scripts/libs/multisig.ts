@@ -25,7 +25,7 @@ export async function sendToMultisig(
     transaction.to,
     0,
     transaction.data,
-    { gasPrice: 5000000000 },
+    { gasPrice: 800000000000 },
   )
   let receipt = await tx.wait()
   if (!receipt.status) {
