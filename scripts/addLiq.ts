@@ -1,5 +1,4 @@
 import { ethers, run } from 'hardhat'
-import { convertAddLiquidityArgsToString } from '../tasks/addLiquidity'
 import { AddLiquidityArgsStruct } from '../typechain-types/LiquidityHelper'
 import {
   AddLiquidityTaskArgs,
@@ -19,7 +18,7 @@ const arg: AddLiquidityArgsStruct = {
 export async function addLiquidity() {
   const payload: AddLiquidityTaskArgs = {
     multisig: multisigAddress,
-    functionArguments: convertAddLiquidityArgsToString([arg]),
+    functionArguments: [arg],
     useMultisig: true,
   }
 

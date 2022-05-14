@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 import "../interfaces/IERC20.sol";
 import "../interfaces/IUniswapV2Router01.sol";
-import "../interfaces/ILiquidityHelper.sol";
+import "../interfaces/ILIquidityHelper.sol";
 
 contract LiquidityHelper is ILiquidityHelper {
     error LengthMismatch();
