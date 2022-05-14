@@ -7,6 +7,8 @@ import "@nomiclabs/hardhat-etherscan";
 require("hardhat-contract-sizer");
 require("dotenv").config();
 require("solidity-coverage");
+require("./tasks/addLiquidity");
+require("./tasks/removeLiquidity");
 
 // You have to export an object to set up your config
 // This object can have the following optional entries:
@@ -36,7 +38,7 @@ module.exports = {
       url: process.env.MATIC_URL,
       accounts: [process.env.SECRET],
       blockGasLimit: 200000000000,
-      gasPrice: 10000000000,
+      gasPrice: 100000000000,
       timeout: 90000,
     },
   },
