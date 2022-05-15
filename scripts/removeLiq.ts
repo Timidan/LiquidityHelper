@@ -1,35 +1,34 @@
 import { ethers, run } from 'hardhat'
-import { convertAddLiquidityArgsToString } from '../tasks/addLiquidity'
-import { AddLiquidityArgsStruct } from '../typechain-types/LiquidityHelper'
+import { convertRemoveLiquidityArgsToString } from '../tasks/removeLiquidity'
+import { RemoveLiquidityArgsStruct } from '../typechain-types/LiquidityHelper'
 import {
-  AddLiquidityTaskArgs,
+  RemoveLiquidityTaskArgs,
   alchemicas,
   GHST,
   multisigAddress,
 } from './libs/liqParamHelpers'
 
-const arg: AddLiquidityArgsStruct = {
+const arg: RemoveLiquidityArgsStruct = {
   _tokenA: alchemicas[0],
   _tokenB: GHST,
-  _amountADesired: ethers.utils.parseEther('100'),
-  _amountBDesired: ethers.utils.parseEther('100'),
+  _liquidity: ethers.utils.parseEther('1'),
   _amountAMin: 0,
   _amountBMin: 0,
 }
-export async function addLiquidity() {
-  const payload: AddLiquidityTaskArgs = {
+export async function removeLiquidity() {
+  const payload: RemoveLiquidityTaskArgs = {
     multisig: multisigAddress,
-    functionArguments: convertAddLiquidityArgsToString([arg]),
+    functionArguments: convertRemoveLiquidityArgsToString([arg]),
     useMultisig: false,
   }
 
-  await run('addLiquidity', payload)
+  await run('removeLiquidity', payload)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 if (require.main === module) {
-  addLiquidity()
+  removeLiquidity()
     .then(() => process.exit(0))
     .catch((error) => {
       console.error(error)

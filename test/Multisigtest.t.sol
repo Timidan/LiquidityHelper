@@ -101,5 +101,7 @@ contract MultisigTests is DSTest {
         cheat.prank(admins[1]);
         mSig.confirmTransaction(txID3);
         emit log_uint(IERC20(fudGHST).balanceOf(helper));
+        emit log_uint(IERC20(GHST).balanceOf(helper));
+        emit log_uint(IERC20(alchemica[0]).balanceOf(helper));
     }
 }
