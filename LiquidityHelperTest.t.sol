@@ -5,7 +5,7 @@ import "../lib/ds-test.git/src/cheat.sol";
 import "../lib/ds-test.git/src/test.sol";
 import "../contracts/LiquidityHelper.sol";
 import "../interfaces/IERC20.sol";
-import "../interfaces/ILIquidityHelper.sol";
+import "../interfaces/ILiquidityHelper.sol";
 
 contract LiquidityHelperTest is DSTest, ILiquidityHelper {
     Vm cheat = Vm(HEVM_ADDRESS);

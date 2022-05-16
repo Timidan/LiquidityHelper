@@ -6,30 +6,23 @@ import {
   alchemicas,
   GHST,
   multisigAddress,
+  transferTokenInTaskArgs,
 } from './libs/liqParamHelpers'
 
-const arg: AddLiquidityArgsStruct = {
-  _tokenA: alchemicas[0],
-  _tokenB: GHST,
-  _amountADesired: ethers.utils.parseEther('100'),
-  _amountBDesired: ethers.utils.parseEther('100'),
-  _amountAMin: 0,
-  _amountBMin: 0,
-}
-export async function addLiquidity() {
-  const payload: AddLiquidityTaskArgs = {
+export async function transferInTokens() {
+  const payload: transferTokenInTaskArgs = {
     multisig: multisigAddress,
-    functionArguments: convertAddLiquidityArgsToString([arg]),
-    useMultisig: false,
+    tokenAddress: alchemicas[0],
+    amount: ethers.utils.parseEther('100').toString(),
   }
 
-  await run('addLiquidity', payload)
+  await run('transferInTokens', payload)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 if (require.main === module) {
-  addLiquidity()
+  transferInTokens()
     .then(() => process.exit(0))
     .catch((error) => {
       console.error(error)

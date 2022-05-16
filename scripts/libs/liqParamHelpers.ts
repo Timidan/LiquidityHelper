@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import {
   AddLiquidityArgsStruct,
   RemoveLiquidityArgsStruct,
@@ -15,15 +16,29 @@ export const GHST = '0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7'
 
 export interface AddLiquidityTaskArgs {
   multisig: string
-  functionArguments: AddLiquidityArgsStruct[]
+  functionArguments: string
   useMultisig: boolean
 }
 
 export interface RemoveLiquidityTaskArgs {
   multisig: string
-  functionArguments: RemoveLiquidityArgsStruct[]
+  functionArguments: string
+  useMultisig: boolean
+}
+
+export interface transferTokenInTaskArgs {
+  multisig: string
+  tokenAddress: string
+  amount: string | BigNumber
+}
+
+export interface transferTokenOutTaskArgs {
+  multisig: string
+  tokenAddresses: string
+  amounts: string
   useMultisig: boolean
 }
 export const abi = [
   'function submitTransaction(address destination, uint value, bytes data) public returns (uint transactionId)',
+  'function transfer(address recipient,uint256 amount) public returns(bool success)',
 ]
