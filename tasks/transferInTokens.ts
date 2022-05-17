@@ -46,7 +46,7 @@ task(
         await sendToMultisig(multisig, signer, tx, hre);
       } else {
         erc20 = await impersonate(
-          "0x51208e5cc9215c6360210c48f81c8270637a5218",
+          multisigAddress,
           erc20,
           hre.ethers,
           hre.network
