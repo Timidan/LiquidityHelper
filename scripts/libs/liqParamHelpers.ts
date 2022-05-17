@@ -4,7 +4,7 @@ import {
   RemoveLiquidityArgsStruct,
 } from "../../typechain-types/LiquidityHelper";
 
-export const HelperAddress = "0x306083da9a54bF9cFAb12133A2eD14E6d3FC485C";
+export const HelperAddress = "0x226D0d6A672108626717aF443B076AC23B0bb580";
 export const multisigAddress = "0xD4151c984e6CF33E04FFAAF06c3374B2926Ecc64";
 export const alchemicas = [
   "0x403E967b044d4Be25170310157cB1A4Bf10bdD0f",
