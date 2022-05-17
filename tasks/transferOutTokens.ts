@@ -10,6 +10,7 @@ import {
 } from "../scripts/libs/liqParamHelpers";
 import { LiquidityHelper } from "../typechain-types/LiquidityHelper";
 import { sendToMultisig } from "../scripts/libs/multisig";
+import { impersonate } from "../helperFunctions";
 export function convertArrayToString(args: string[]): string {
   let output: string;
   output = args.toString();
@@ -44,23 +45,37 @@ task("transferOutTokens", "Sends tokens out of the Helper Contract")
           signer = (await hre.ethers.getSigners())[0];
         }
       } else {
-        throw Error("Wrong network");
+        signer = (await hre.ethers.getSigners())[0];
       }
       console.log(
         "Transferring token from helper contract to",
         multisigAddress
       );
-      const helper = (await hre.ethers.getContractAt(
+      let helper = (await hre.ethers.getContractAt(
         "LiquidityHelper",
         HelperAddress
       )) as LiquidityHelper;
 
-      let tx: PopulatedTransaction =
-        await helper.populateTransaction.returnTokens(
+      const owner = await helper.contractOwner();
+      console.log("owner:", owner);
+
+      if (hre.network.name === "matic") {
+        let tx: PopulatedTransaction =
+          await helper.populateTransaction.returnTokens(
+            convertStringToArray(tokenAddresses),
+            convertStringToArray(amounts),
+            { gasLimit: 800000 }
+          );
+        await sendToMultisig(multisig, signer, tx, hre);
+      } else {
+        helper = await impersonate(owner, helper, hre.ethers, hre.network);
+
+        const tx = await helper.returnTokens(
           convertStringToArray(tokenAddresses),
           convertStringToArray(amounts),
           { gasLimit: 800000 }
         );
-      await sendToMultisig(multisig, signer, tx, hre);
+        await tx.wait();
+      }
     }
   );

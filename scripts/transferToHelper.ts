@@ -1,22 +1,36 @@
-import { ethers, run } from 'hardhat'
-import { convertAddLiquidityArgsToString } from '../tasks/addLiquidity'
-import { AddLiquidityArgsStruct } from '../typechain-types/LiquidityHelper'
+import { ethers, run } from "hardhat";
+import { convertAddLiquidityArgsToString } from "../tasks/addLiquidity";
+import { convertArrayToString } from "../tasks/transferOutTokens";
+import { AddLiquidityArgsStruct } from "../typechain-types/LiquidityHelper";
 import {
   AddLiquidityTaskArgs,
   alchemicas,
   GHST,
   multisigAddress,
   transferTokenInTaskArgs,
-} from './libs/liqParamHelpers'
+  transferTokenOutTaskArgs,
+} from "./libs/liqParamHelpers";
 
 export async function transferInTokens() {
-  const payload: transferTokenInTaskArgs = {
-    multisig: multisigAddress,
-    tokenAddress: alchemicas[0],
-    amount: ethers.utils.parseEther('100').toString(),
+  for await (const alchemica of alchemicas) {
+    const payload: transferTokenInTaskArgs = {
+      multisig: multisigAddress,
+      tokenAddress: alchemica,
+      amount: ethers.utils.parseEther("100").toString(),
+    };
+    await run("transferInTokens", payload);
   }
 
-  await run('transferInTokens', payload)
+  const amounts = new Array(4).fill(ethers.utils.parseEther("100").toString());
+
+  const payload2: transferTokenOutTaskArgs = {
+    multisig: multisigAddress,
+    tokenAddresses: convertArrayToString(alchemicas),
+    amounts: convertArrayToString(amounts),
+    useMultisig: false,
+  };
+
+  await run("transferOutTokens", payload2);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
@@ -25,7 +39,7 @@ if (require.main === module) {
   transferInTokens()
     .then(() => process.exit(0))
     .catch((error) => {
-      console.error(error)
-      process.exit(1)
-    })
+      console.error(error);
+      process.exit(1);
+    });
 }
