@@ -15,7 +15,7 @@ export async function deployHelper() {
   ];
   const _quickswapRouter = "0xa5e0829caced8ffdd4de3c43696c57f7d7a678ff";
   const ghst = "0x385eeac5cb85a38a9a07a70c73e0a3271cfb54a7";
-  const owner = "0xC3c2e1Cf099Bc6e1fA94ce358562BCbD5cc59FE5";
+  const owner = "0xD4151c984e6CF33E04FFAAF06c3374B2926Ecc64"; //pixelcraft multisig
 
   const Helper = await ethers.getContractFactory("LiquidityHelper");
   const helper = await Helper.deploy(
