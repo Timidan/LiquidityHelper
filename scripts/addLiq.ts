@@ -8,18 +8,44 @@ import {
   multisigAddress,
 } from './libs/liqParamHelpers'
 
-const arg: AddLiquidityArgsStruct = {
-  _tokenA: alchemicas[0],
-  _tokenB: GHST,
-  _amountADesired: ethers.utils.parseEther('100'),
-  _amountBDesired: ethers.utils.parseEther('100'),
-  _amountAMin: 0,
-  _amountBMin: 0,
-}
+const args: AddLiquidityArgsStruct[] = [
+  {
+    _tokenA: alchemicas[0],
+    _tokenB: GHST,
+    _amountADesired: ethers.utils.parseEther('100'),
+    _amountBDesired: ethers.utils.parseEther('100'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[1],
+    _tokenB: GHST,
+    _amountADesired: ethers.utils.parseEther('100'),
+    _amountBDesired: ethers.utils.parseEther('100'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[2],
+    _tokenB: GHST,
+    _amountADesired: ethers.utils.parseEther('100'),
+    _amountBDesired: ethers.utils.parseEther('100'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[3],
+    _tokenB: GHST,
+    _amountADesired: ethers.utils.parseEther('100'),
+    _amountBDesired: ethers.utils.parseEther('100'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+]
 export async function addLiquidity() {
   const payload: AddLiquidityTaskArgs = {
     multisig: multisigAddress,
-    functionArguments: convertAddLiquidityArgsToString([arg]),
+    functionArguments: convertAddLiquidityArgsToString(args),
     useMultisig: false,
   }
 

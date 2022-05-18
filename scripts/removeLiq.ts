@@ -8,17 +8,40 @@ import {
   multisigAddress,
 } from './libs/liqParamHelpers'
 
-const arg: RemoveLiquidityArgsStruct = {
-  _tokenA: alchemicas[0],
-  _tokenB: GHST,
-  _liquidity: ethers.utils.parseEther('1'),
-  _amountAMin: 0,
-  _amountBMin: 0,
-}
+const args: RemoveLiquidityArgsStruct[] = [
+  {
+    _tokenA: alchemicas[0],
+    _tokenB: GHST,
+    _liquidity: ethers.utils.parseEther('1'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[1],
+    _tokenB: GHST,
+    _liquidity: ethers.utils.parseEther('1'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[2],
+    _tokenB: GHST,
+    _liquidity: ethers.utils.parseEther('1'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+  {
+    _tokenA: alchemicas[3],
+    _tokenB: GHST,
+    _liquidity: ethers.utils.parseEther('1'),
+    _amountAMin: 0,
+    _amountBMin: 0,
+  },
+]
 export async function removeLiquidity() {
   const payload: RemoveLiquidityTaskArgs = {
     multisig: multisigAddress,
-    functionArguments: convertRemoveLiquidityArgsToString([arg]),
+    functionArguments: convertRemoveLiquidityArgsToString(args),
     useMultisig: false,
   }
 
